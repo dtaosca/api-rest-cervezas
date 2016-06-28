@@ -1,27 +1,23 @@
-var express = require('express') //llamamos a Express que es la libreria que hemos instalado.
-// Guardamos la librerie en la variable app. instanciamos la libreria en la variable app
-var app = express()               
+var express = require('express') //llamamos a Express
+var app = express()       
+var bodyParser = require('body-parser')        
 
 var port = process.env.PORT || 8080  // establecemos nuestro puerto
 
-app.get('/', function(req, res) {
-  res.json({ mensaje: '¡Hola Mundo!' })   
-})
+/*toda la configuración de bbdd la hacemos en un fichero a parte*/
+require('./db')
 
-app.get('/cervezas', function(req, res) {
-  res.json({ mensaje: '¡A beber cerveza!' })  
-})
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())            
 
-app.post('/', function(req, res) {
-  res.json({ mensaje: 'Método post' })   
-})
+// nuestra ruta irá en http://localhost:8080/api
+// es bueno que haya un prefijo, sobre todo por el tema de versiones de la API
+var router = require('./routes')
+app.use('/api', router)
 
-app.delete('/', function(req, res) {
-  res.json({ mensaje: 'Método delete' })  
-})
-
-// iniciamos nuestro servidor
+//arrancamos el servidor
 app.listen(port)
 console.log('API escuchando en el puerto ' + port)
 
-
+/*lo añado al final de app/server.js:*/
+module.exports = app
